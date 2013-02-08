@@ -11,6 +11,7 @@ def threeP(y, x,  div):
     
     # Calculate  interval for 
     dx = (xMax - xMin) / div
+    print "dx: ", dx
     
     mult = np.linspace(1,  div,  div)
     
@@ -25,15 +26,42 @@ def threeP(y, x,  div):
         
         model, residual = np.linalg.lstsq(A, y)[0]
         
-        r2[m] = 1 - residual/(y.size * y.var())
-        
-        
+        r2[m] = rsquared(residual,  y)
+    
     print "Model: ",  model
     print "Residual: ",  residual
     print "r2: ",  r2
+
+    mIndex = np.mean(np.median(np.where(r2 == np.max(r2))))
     
     # Second Pass
     
+    xMax = x[mIndex] + dx
+    xMin = x[mIndex] - dx
+    
+    print "xMax: ",  xMax
+    print "xMin: ",  xMin
+    
+    dx = (xMax - xMin) / div
+    
+    mult = np.linspace(1,  div,  div)
+    
+    r2 = np.zeros(len(x))
+    
+    for m in mult:
+        xTemp = x - (xMin + (m-1)*dx)
+        xTemp[xTemp < 0.] = 0.
+        A = np.vstack([xTemp,  np.ones(len(xTemp))]).T
+        
+        model, residual = np.linalg.lstsq(A, y)[0]
+        
+        r2[m] = rsquared(residual,  y)
+    
+    print "r2_2: ",  r2
+    print "b3: ", xMin + np.mean(np.median(np.where(r2 == np.max(r2))))*dx
+        
+def rsquared(r,  y):
+    return 1 - r/(y.size * y.var())
     
     
 def main():
