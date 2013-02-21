@@ -4,7 +4,11 @@ import matplotlib.pyplot as plt
 
 
 def threeP(y, x,  div):
-    print "...First Pass..."
+    print ""
+    print "************************"
+    print "...Search: First Pass..."
+    print "************************"
+    print ""
     
     # Calculate minimum and maximum values for X axis
     xMin = np.min(x)
@@ -43,11 +47,12 @@ def threeP(y, x,  div):
 
         xTemp = xTemp - xCp[m]
         xTemp[xTemp <= 0.] = 0.
-        
+
+        """
         print "Round: ",  m
         print "xCp: ",  xCp[m]
         print "xTemp: ",  xTemp
-        
+        """
         # In the future, this is where I would add additional x variables for multivariate analysis.  May need a control structure
         # to manage numpy and scipy implementations of OLS regression.  As of current, it is strictly an univariate OLS regression.
         
@@ -76,49 +81,39 @@ def threeP(y, x,  div):
         cvrmse[m] = rmse[m] / np.mean(y)
         r2[m] = 1 - sse/ssm
         adjr2[m] = 1 - (len(y) - 1) / (len(y) - (A.shape[1] -1))
-     
+
+
+        """    
         print "yHat: ", yHat
         print "rmse: ",  rmse[m]
         print "cv-rmse: ",  cvrmse[m]
         print "r2: ",  r2[m]
         print "adj-R2: ",  adjr2[m]
 
+        """
+
         # Now need to select where rmse is lowest and use that as the starting point for the next iteration of the grid search.
 
-        #plot(x,  y,  yHat)
-        
-        """
-        #print "r2: ", r2 = 1 - sse / ssm
-        
-        
-        
-        r2[m] = rsquared(result1[1],  y)
-
-    print "m: ", result1[0][0]
-    print "b: ", result1[0][1]
-    
-    #print "r2: ",  r2
-    """
-    
-
+ 
     mIndex = np.mean(np.median(np.where(rmse == np.min(rmse[1:]))))
 
     xMax = xCp[mIndex] + dx
     xMin = xCp[mIndex] - dx
-
+    
+    """
     print "dx: ", dx
     print "mIndex: ", mIndex
     print "rmse: ", rmse[mIndex]
     print "xMax2: ", xMax
     print "xMin2: ", xMin
-
+    """
     
     # Second Pass
 
     print ""
-    print "*****************"
-    print "...Second Pass..."
-    print "*****************"
+    print "*************************"
+    print "...Search: Second Pass..."
+    print "*************************"
     print ""
 
     div = 100
@@ -149,17 +144,19 @@ def threeP(y, x,  div):
 
         xTemp = xTemp - xCp[m]
         xTemp[xTemp <= 0.] = 0.
-        
+
+        """
         print "Round: ",  m
         print "xCp: ",  xCp[m]
         print "xTemp: ",  xTemp
+        """
         
         # In the future, this is where I would add additional x variables for multivariate analysis.  May need a control structure
         # to manage numpy and scipy implementations of OLS regression.  As of current, it is strictly an univariate OLS regression.
         
         A = np.vstack([xTemp,  np.ones(len(xTemp))]).T
 
-        result1 = np.linalg.lstsq(A, y)
+        result2 = np.linalg.lstsq(A, y)
 
         # Need to calculate RMSE, CV-RMSE, r2, adjR2, sigma, roe
         # yHat[np.where(xTemp == 0.)] = np.mean(y[np.where(xTemp == 0.)])
@@ -173,7 +170,7 @@ def threeP(y, x,  div):
         # cv-rmse: rmse / ymean * 100
 
         yHat[np.where(xTemp == 0.)] = np.mean(y[np.where(xTemp == 0.)])
-        yHat[np.where(xTemp != 0.)] = result1[0][0]*xTemp[np.where(xTemp != 0.)] + result1[0][1]
+        yHat[np.where(xTemp != 0.)] = result2[0][0]*xTemp[np.where(xTemp != 0.)] + result2[0][1]
          
         ssm = np.sum(np.square(y - np.mean(y)))
         sse = np.sum(np.square(y-yHat))
@@ -182,21 +179,66 @@ def threeP(y, x,  div):
         cvrmse[m] = rmse[m] / np.mean(y)
         r2[m] = 1 - sse/ssm
         adjr2[m] = 1 - (len(y) - 1) / (len(y) - (A.shape[1] -1))
-     
+
+        """
         print "yHat: ", yHat
         print "rmse: ",  rmse[m]
         print "cv-rmse: ",  cvrmse[m]
         print "r2: ",  r2[m]
         print "adj-R2: ",  adjr2[m]
-
+        """
 
     mIndex = np.mean(np.median(np.where(rmse == np.min(rmse[1:]))))
 
+    """
     print "dx: ", dx
     print "mIndex: ", mIndex
     print "rmse: ", rmse[mIndex]
     print "xCp: ", xCp[mIndex]
+    """
 
+    # Calculate final model
+
+    print ""
+    print "*****************"
+    print "...Final Model..."
+    print "*****************"
+    print ""
+
+    # Need to confirm against EnergyExplorer
+
+    f_yHat = np.zeros(len(x))
+
+    xTemp = x
+
+    xTemp = xTemp - xCp[mIndex]
+    xTemp[xTemp <= 0.] = 0.
+        
+    A = np.vstack([xTemp,  np.ones(len(xTemp))]).T
+
+    result1 = np.linalg.lstsq(A, y)
+
+    f_yHat[np.where(xTemp == 0.)] = np.mean(y[np.where(xTemp == 0.)])
+    f_yHat[np.where(xTemp != 0.)] = result1[0][0]*xTemp[np.where(xTemp != 0.)] + result1[0][1]
+         
+    f_ssm = np.sum(np.square(y - np.mean(y)))
+    f_sse = np.sum(np.square(y-f_yHat))
+    f_mse = np.sum(np.square(f_yHat - y)) / len(y)
+    f_rmse = np.sqrt(f_mse)
+    f_cvrmse = f_rmse / np.mean(y)
+    f_r2 = 1 - f_sse/f_ssm
+    f_adjr2 = 1 - (len(y) - 1) / (len(y) - (A.shape[1] -1))
+
+    print "B1: ", np.mean(y[np.where(xTemp == 0.)])
+    print "B2: ", result1[0][0]
+    print "B3: ", xCp[mIndex]
+    # print "yHat: ", f_yHat
+    print "rmse: ",  f_rmse
+    print "cv-rmse: ",  f_cvrmse
+    print "r2: ",  f_r2
+    print "adj-R2: ",  f_adjr2
+
+    plot(x, y, f_yHat)
         
 
 def rsquared(r,  y):
