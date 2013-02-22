@@ -75,14 +75,16 @@ def threeP(y, x,  div):
         yHat[np.where(xTemp == 0.)] = np.mean(y[np.where(xTemp == 0.)])
         yHat[np.where(xTemp != 0.)] = result1[0][0]*xTemp[np.where(xTemp != 0.)] + result1[0][1]
          
-        ssm = np.sum(np.square(y - np.mean(y)))
-        sse = np.sum(np.square(y-yHat))
-        mse = np.sum(np.square(yHat - y)) / len(y)
-        rmse[m] = np.sqrt(mse)
-        cvrmse[m] = rmse[m] / np.mean(y)
-        r2[m] = 1 - sse/ssm
-        adjr2[m] = 1 - (len(y) - 1) / (len(y) - (A.shape[1] -1))
+##        ssm = np.sum(np.square(y - np.mean(y)))
+##        sse = np.sum(np.square(y-yHat))
+##        mse = np.sum(np.square(yHat - y)) / len(y)
+##        rmse[m] = np.sqrt(mse)
+##        cvrmse[m] = rmse[m] / np.mean(y)
+##        r2[m] = 1 - sse/ssm
+##        adjr2[m] = 1 - (len(y) - 1) / (len(y) - (A.shape[1] - 1))
 
+
+        ssm, sse, mse, rmse[m], cvrmse[m], r2[m], adjr2[m] = infStats(y, yHat, A.shape[1])
 
         """    
         print "yHat: ", yHat
@@ -172,14 +174,18 @@ def threeP(y, x,  div):
 
         yHat[np.where(xTemp == 0.)] = np.mean(y[np.where(xTemp == 0.)])
         yHat[np.where(xTemp != 0.)] = result2[0][0]*xTemp[np.where(xTemp != 0.)] + result2[0][1]
+
+        
          
-        ssm = np.sum(np.square(y - np.mean(y)))
-        sse = np.sum(np.square(y-yHat))
-        mse = np.sum(np.square(yHat - y)) / len(y)
-        rmse[m] = np.sqrt(mse)
-        cvrmse[m] = rmse[m] / np.mean(y)
-        r2[m] = 1 - sse/ssm
-        adjr2[m] = 1 - (len(y) - 1) / (len(y) - (A.shape[1] -1))
+##        ssm = np.sum(np.square(y - np.mean(y)))
+##        sse = np.sum(np.square(y-yHat))
+##        mse = np.sum(np.square(yHat - y)) / len(y)
+##        rmse[m] = np.sqrt(mse)
+##        cvrmse[m] = rmse[m] / np.mean(y)
+##        r2[m] = 1 - sse/ssm
+##        adjr2[m] = 1 - (len(y) - 1) / (len(y) - (A.shape[1] -1))
+
+        ssm, sse, mse, rmse[m], cvrmse[m], r2[m], adjr2[m] = infStats(y, yHat, A.shape[1])
 
         """
         print "yHat: ", yHat
@@ -230,14 +236,14 @@ def threeP(y, x,  div):
     f_r2 = 1 - f_sse/f_ssm
     f_adjr2 = 1 - (len(y) - 1) / (len(y) - (A.shape[1] -1))
 
-    print "B1: ", np.mean(y[np.where(xTemp == 0.)])
-    print "B2: ", result1[0][0]
-    print "B3: ", xCp[mIndex]
-    # print "yHat: ", f_yHat
-    print "rmse: ",  f_rmse
-    print "cv-rmse: ",  f_cvrmse
-    print "r2: ",  f_r2
-    print "adj-R2: ",  f_adjr2
+##    print "B1: ", np.mean(y[np.where(xTemp == 0.)])
+##    print "B2: ", result1[0][0]
+##    print "B3: ", xCp[mIndex]
+##    # print "yHat: ", f_yHat
+##    print "rmse: ",  f_rmse
+##    print "cv-rmse: ",  f_cvrmse
+##    print "r2: ",  f_r2
+##    print "adj-R2: ",  f_adjr2
 
     f_ssm, f_sse, f_mse, f_rmse, f_cvrmse, f_r2, f_adjr2 = infStats(y, f_yHat, A.shape[1])
     
