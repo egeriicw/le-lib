@@ -239,7 +239,7 @@ def threeP(y, x,  div):
     print "r2: ",  f_r2
     print "adj-R2: ",  f_adjr2
 
-    f_ssm, f_sse, f_mse, f_rmse, f_cvrmse, f_r2, f_adjr2 = infStats(y, f_yHat, A.shape[1])
+    f_ssm, f_sse, f_mse, f_rmse, f_cvrmse, f_r2, f_adjr2 = infStats(y, yHat, A.shape[1])
     
     print "rmse: ",  f_rmse
     print "cv-rmse: ",  f_cvrmse
