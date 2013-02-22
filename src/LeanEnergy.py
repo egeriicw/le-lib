@@ -265,8 +265,6 @@ def infStats(t_Y, t_yHat, n):
     
     return t_ssm, t_sse, t_mse, t_rmse, t_cvrmse, t_r2, t_adjr2
         
-def rsquared(r,  y):
-    return 1 - r/(y.size * y.var())
 
 def plot(x,  y,  yhat):
     plt.plot(x, y, 'o')
